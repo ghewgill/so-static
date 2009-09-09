@@ -10,3 +10,4 @@ Run:
     ./xt users.xml users.xsl
     python unify.py
     ./posts.sh
+    ./xt unify.xml index.xsl static/index.html
