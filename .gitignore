@@ -1,0 +1,15 @@
+# data dump files
+badges.xml
+comments.xml
+posts.xml
+tags.xml
+users.xml
+votes.xml
+
+# intermediate files
+unify.xml
+unify/
+*.class
+
+# output
+static/
