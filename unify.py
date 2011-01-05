@@ -1,5 +1,6 @@
 from __future__ import division
 
+import mmap
 import os
 import re
 import time
@@ -14,7 +15,9 @@ class Question(object):
 Users = {}
 Questions = {}
 Answers = {}
-Posts = open("posts.xml")
+size = os.stat("posts.xml").st_size
+f = open("posts.xml")
+Posts = mmap.mmap(f.fileno(), size, access=mmap.ACCESS_READ)
 
 def readusers():
     f = open("users.xml")
@@ -34,6 +37,7 @@ def readposts():
         if len(s) == 0:
             break
         if s.startswith("  <row"):
+            slice = (ofs+6, ofs+len(s)-4)
             m = re.search(r' Id="(\d+)"', s)
             assert m
             id = m.group(1)
@@ -41,7 +45,7 @@ def readposts():
             assert m
             if m.group(1) == "1":
                 print "\r", id,
-                Questions[id] = Question(ofs, s)
+                Questions[id] = Question(slice, s)
             elif m.group(1) == "2":
                 m = re.search(r' ParentId="(\d+)"', s)
                 assert m
@@ -51,14 +55,13 @@ def readposts():
                 else:
                     a = []
                     Answers[qid] = a
-                a.append(ofs)
+                a.append(slice)
+            else:
+                pass
     print
 
 def getpost(ofs):
-    Posts.seek(ofs)
-    s = Posts.readline()
-    s = s.strip()
-    s = s[4:len(s)-2]
+    s = Posts[ofs[0]:ofs[1]]
     m = re.search(r' OwnerUserId="(-?\d+)"', s)
     if m:
         if m.group(1) in Users:
