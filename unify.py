@@ -1,4 +1,8 @@
+from __future__ import division
+
+import os
 import re
+import time
 
 class Question(object):
     def __init__(self, ofs, s):
@@ -61,28 +65,41 @@ def getpost(ofs):
             s += ' OwnerDisplayName="' + Users[m.group(1)] + '"'
     return s
 
-readusers()
-readposts()
+def unify():
+    out = open("unify.xml", "w")
+    print >>out, """<?xml version="1.0" encoding="utf-8"?>"""
+    print >>out, "<so>"
+    ids = sorted(Questions, key = int)
+    highest = int(ids[-1])
+    start = time.time()
+    for id in ids:
+        print "\r", id, "%d%%" % (int(id) * 100 / highest), "eta", time.ctime(start + (time.time() - start) * highest / int(id)),
+        q = Questions[id]
+        print >>out, """  <question Id="%s" Score="%s" Title="%s">""" % (id, q.score, q.title)
+        for t in q.tags:
+            print >>out, "    <tag>%s</tag>" % t
+        print >>out, """  </question>"""
+        fn = "/".join(id[x:x+3] for x in range(0, len(id), 3))
+        if "/" in fn:
+            try:
+                os.makedirs("unify/" + fn[:fn.rfind("/")])
+            except OSError:
+                pass
+        qout = open("unify/%s.xml" % fn, "w")
+        print >>qout, """<?xml version="1.0" encoding="utf-8"?>"""
+        print >>qout, "<question", getpost(q.ofs), ">"
+        if id in Answers:
+            for a in Answers[id]:
+                print >>qout, "  <answer", getpost(a), "/>"
+        print >>qout, "</question>"
+        qout.close()
+    print
+    print >>out, "</so>"
+    out.close()
 
-out = open("unify.xml", "w")
-print >>out, """<?xml version="1.0" encoding="utf-8"?>"""
-print >>out, "<so>"
-ids = sorted(Questions, key = int)
-for id in ids:
-    print "\r", id,
-    q = Questions[id]
-    print >>out, """  <question Id="%s" Score="%s" Title="%s">""" % (id, q.score, q.title)
-    for t in q.tags:
-        print >>out, "    <tag>%s</tag>" % t
-    print >>out, """  </question>"""
-    qout = open("unify/%s.xml" % id, "w")
-    print >>qout, """<?xml version="1.0" encoding="utf-8"?>"""
-    print >>qout, "<question", getpost(q.ofs), ">"
-    if id in Answers:
-        for a in Answers[id]:
-            print >>qout, "  <answer", getpost(a), "/>"
-    print >>qout, "</question>"
-    qout.close()
-print
-print >>out, "</so>"
-out.close()
+print("Read users")
+readusers()
+print("Read posts")
+readposts()
+print("Create unified xml")
+unify()

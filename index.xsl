@@ -49,7 +49,12 @@
             </head>
             <body>
                 <xsl:for-each select="/so/question">
-                    <div><a href="/questions/{@Id}.html"><xsl:value-of select="@Title" /></a></div>
+                    <xsl:variable name="fn">
+                        <xsl:call-template name="shard">
+                            <xsl:with-param name="id" select="@Id" />
+                        </xsl:call-template>
+                    </xsl:variable>
+                    <div><a href="questions/{$fn}.html"><xsl:value-of select="@Title" /></a></div>
                 </xsl:for-each>
             </body>
         </html>
@@ -70,6 +75,23 @@
             </body>
         </html>
     </xt:document>
+</xsl:template>
+
+<xsl:template name="shard">
+    <xsl:param name="id" />
+    <xsl:choose>
+        <xsl:when test="string-length($id) &lt;= 3">
+            <xsl:value-of select="$id" />
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:variable name="rest">
+                <xsl:call-template name="shard">
+                    <xsl:with-param name="id" select="substring($id, 4)" />
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:value-of select="concat(substring($id, 1, 3), '/', $rest)" />
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>
