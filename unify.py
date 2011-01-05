@@ -38,7 +38,7 @@ def readposts():
             if m.group(1) == "1":
                 print "\r", id,
                 Questions[id] = Question(ofs, s)
-            else:
+            elif m.group(1) == "2":
                 m = re.search(r' ParentId="(\d+)"', s)
                 assert m
                 qid = m.group(1)
