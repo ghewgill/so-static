@@ -3,6 +3,7 @@
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xt="http://www.jclark.com/xt"
+    xmlns:idx="www.mobipocket.com"
     extension-element-prefixes="xt"
 >
 
@@ -20,8 +21,10 @@
         </head>
         <body>
             <xsl:variable name="q" select="." />
-            <h1><xsl:value-of select="@Title" /></h1>
-            <xsl:call-template name="post" />
+            <idx:entry>
+                <h1><idx:orth><xsl:value-of select="@Title" /></idx:orth></h1>
+                <xsl:call-template name="post" />
+            </idx:entry>
             <xsl:for-each select="answer">
                 <xsl:sort select="@Score" data-type="number" order="descending" />
                 <hr />
@@ -60,7 +63,7 @@
 <xsl:template name="tags">
     <xsl:param name="tags" />
     <xsl:if test="$tags">
-        <span><xsl:value-of select="substring-before(substring($tags, 2), '&gt;')" /></span>
+        <span><idx:key><xsl:value-of select="substring-before(substring($tags, 2), '&gt;')" /></idx:key></span>
         <xsl:if test="contains(substring($tags, 2), '&lt;')">, </xsl:if>
         <xsl:call-template name="tags">
             <xsl:with-param name="tags" select="substring-after($tags, '&gt;')" />

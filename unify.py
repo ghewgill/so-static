@@ -10,6 +10,14 @@ class Question(object):
         self.ofs = ofs
         self.title = re.search(r' Title="(.*?)"', s).group(1)
         self.score = re.search(r' Score="(.*?)"', s).group(1)
+        self.creation_date = re.search(r' CreationDate="(.*?)"', s).group(1)
+        self.view_count = re.search(r' ViewCount="(.*?)"', s).group(1)
+        m = re.search(r' AnswerCount="(.*?)"', s)
+        self.answer_count = m.group(1) if m is not None else 0
+        m = re.search(r' CommentCount="(.*?)"', s)
+        self.comment_count = m.group(1) if m is not None else 0
+        m = re.search(r' FavoriteCount="(.*?)"', s)
+        self.favorite_count = m.group(1) if m is not None else 0
         self.tags = re.findall(r'&lt;(.*?)&gt;', re.search(r' Tags="(.*?)"', s).group(1))
 
 Users = {}
@@ -78,7 +86,7 @@ def unify():
     for id in ids:
         print "\r", id, "%d%%" % (int(id) * 100 / highest), "eta", time.ctime(start + (time.time() - start) * highest / int(id)),
         q = Questions[id]
-        print >>out, """  <question Id="%s" Score="%s" Title="%s">""" % (id, q.score, q.title)
+        print >>out, """  <question Id="%s" Score="%s" CreationDate="%s" ViewCount="%s" CommentCount="%s" AnswerCount="%s" FavoriteCount="%s" Title="%s">""" % (id, q.score, q.creation_date, q.view_count, q.comment_count, q.answer_count, q.favorite_count, q.title)
         for t in q.tags:
             print >>out, "    <tag>%s</tag>" % t
         print >>out, """  </question>"""
