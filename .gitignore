@@ -13,3 +13,7 @@ unify/
 
 # output
 static/
+*.opf
+*.mobi
+contents.html
+toc.ncx
