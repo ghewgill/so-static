@@ -22,7 +22,7 @@
         <body>
             <xsl:variable name="q" select="." />
             <idx:entry>
-                <h1><idx:orth><xsl:value-of select="@Title" /></idx:orth></h1>
+                <h1><idx:orth><a href="http://stackoverflow.com/questions/{@Id}"><xsl:value-of select="@Title" /></a></idx:orth></h1>
                 <xsl:call-template name="post" />
             </idx:entry>
             <xsl:for-each select="answer">
@@ -41,9 +41,10 @@
     <div>
         Score: <xsl:value-of select="@Score" />
         <xsl:if test="@Id = $accepted">*</xsl:if>
-    </div>
-    <div>
-        <xsl:value-of select="@Body" disable-output-escaping="yes" />
+        - <a href="http://stackoverflow.com/users/{@OwnerUserId}">
+            <xsl:value-of select="@OwnerDisplayName" />
+        </a>
+        (<xsl:value-of select="substring-before(@CreationDate, 'T')" />)
     </div>
     <xsl:if test="@Tags">
         <div>
@@ -53,17 +54,14 @@
         </div>
     </xsl:if>
     <div>
-        - <a href="../users/{@OwnerUserId}.html">
-            <xsl:value-of select="@OwnerDisplayName" />
-        </a>
-        (<xsl:value-of select="substring-before(@CreationDate, 'T')" />)
+        <xsl:value-of select="@Body" disable-output-escaping="yes" />
     </div>
 </xsl:template>
 
 <xsl:template name="tags">
     <xsl:param name="tags" />
     <xsl:if test="$tags">
-        <span><idx:key><xsl:value-of select="substring-before(substring($tags, 2), '&gt;')" /></idx:key></span>
+        <span>[<idx:key><xsl:value-of select="substring-before(substring($tags, 2), '&gt;')" /></idx:key>]</span>
         <xsl:if test="contains(substring($tags, 2), '&lt;')">, </xsl:if>
         <xsl:call-template name="tags">
             <xsl:with-param name="tags" select="substring-after($tags, '&gt;')" />
