@@ -28,6 +28,7 @@
             <xsl:for-each select="answer">
                 <xsl:sort select="@Score" data-type="number" order="descending" />
                 <hr />
+                <a name="{@Id}" />
                 <xsl:call-template name="post">
                     <xsl:with-param name="accepted" select="$q/@AcceptedAnswerId" />
                 </xsl:call-template>
