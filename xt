@@ -1,3 +1,3 @@
 #!/bin/sh
 
-java -cp xt20051206.jar:xp.jar -Xmx4096m com.jclark.xsl.sax.Driver $*
+java -cp xt20051206.jar:xp.jar -Xmx8192m com.jclark.xsl.sax.Driver $*
