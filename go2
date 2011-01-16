@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+tag=$1
+minq=$2
+
+./xt unify.xml mobi.xsl stack_overflow_$tag.opf tag=$1 minq=$2
+python3.1 getimages.py stack_overflow_$tag.opf
+~/build/kindlegen/kindlegen stack_overflow_$tag.opf
